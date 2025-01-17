@@ -11,25 +11,25 @@ const fetchConfig: MoveFetchConfig = {
 
 // cetus swaps
 cetus.bind().onEventSwapEvent((event, ctx) => {
-  ctx.eventLogger.emit("cetus_swap_event", {
-      atob: event.data_decoded.atob,
-      pool: event.data_decoded.pool,
-      partner: event.data_decoded.partner,
-      amount_in: event.data_decoded.amount_in,
-      amount_out: event.data_decoded.amount_out,
-      ref_amount: event.data_decoded.ref_amount,
-      fee_amount: event.data_decoded.fee_amount,
-      vault_a_amount: event.data_decoded.vault_a_amount,
-      vault_b_amount: event.data_decoded.vault_b_amount,
-      before_sqrt_price: event.data_decoded.before_sqrt_price,
-      after_sqrt_price: event.data_decoded.after_sqrt_price,
-      steps: event.data_decoded.steps,
-      sender: event.sender,
-      storage_cost: ctx.transaction.effects?.gasUsed.storageCost,
-      gas_computation: ctx.transaction.effects?.gasUsed.computationCost,
-      nonrefundable_storage_fee: ctx.transaction.effects?.gasUsed.nonRefundableStorageFee,
-      storage_rebate: ctx.transaction.effects?.gasUsed.storageRebate
-  })
+  ctx.eventLogger.emit("single_swap_event", {
+    protocol: "cetus",
+    protocol_version: "v1",
+    pool_id: event.data_decoded.pool || null,
+    sender: event.sender,
+    coin_in: null,
+    coin_out: null,
+    amount_in: event.data_decoded.amount_in,
+    amount_out: event.data_decoded.amount_out,
+    a_to_b: event.data_decoded.atob || null,
+    fee_amount: event.data_decoded.fee_amount ?? null,
+
+    // Gas usage
+    storage_cost: ctx.transaction.effects?.gasUsed.storageCost,
+    gas_computation: ctx.transaction.effects?.gasUsed.computationCost,
+    nonrefundable_storage_fee:
+      ctx.transaction.effects?.gasUsed.nonRefundableStorageFee,
+    storage_rebate: ctx.transaction.effects?.gasUsed.storageRebate,
+  });
 }, fetchConfig);
 
 // pool info
